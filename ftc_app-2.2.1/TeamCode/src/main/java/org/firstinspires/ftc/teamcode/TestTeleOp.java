@@ -32,13 +32,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -55,24 +53,13 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Main TeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Template: Test teleop", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class MainTeleOp extends OpMode {
+public class TestTeleOp extends OpMode {
 
-    DcMotor motorRight;
-    DcMotor motorLeft;
+    DcMotor left;
+    DcMotor right;
 
-    DcMotor motorHopper;
-
-    DcMotor motorLauncherL;
-    DcMotor motorLauncherR;
-
-    boolean slow;
-
-    //Servo ballLoader;
-    //double openPos;
-    //double holdingPos;
-    //double launchPos;
     private ElapsedTime runtime = new ElapsedTime();
 
     //region init()
@@ -83,22 +70,12 @@ public class MainTeleOp extends OpMode {
      */
     @Override
     public void init() {
-        // Launcher servo positions
-
         // Main motors (wheels) -- reverse one of them
-        motorLeft = hardwareMap.dcMotor.get("lMotor");
-        motorRight = hardwareMap.dcMotor.get("rMotor");
-        motorLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        motorHopper = hardwareMap.dcMotor.get("hMotor");
+        left = hardwareMap.dcMotor.get("left");
+        left.setDirection(DcMotorSimple.Direction.REVERSE);
+        right = hardwareMap.dcMotor.get("right");
 
-        motorLauncherL = hardwareMap.dcMotor.get("lLauncher");
-        motorLauncherR = hardwareMap.dcMotor.get("rLauncher");
-
-        slow = false;
-
-        //ballLoader = hardwareMap.servo.get("loader");
-        //ballLoader.setPosition(openPos);
     }
     //endregion
 
@@ -106,78 +83,15 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop() {
 
-        //region WHEELS
-        // ## WHEEL MOTORS ##
-        // Gets values from joysticks
-
-        float right1;
-        float left1;
-
-        if(slow) {
-            right1 = gamepad1.right_stick_y * (float)0.5;
-            left1 = gamepad1.left_stick_y * (float)0.5;
-        }
-        else{
-            right1 = gamepad1.right_stick_y;
-            left1 = gamepad1.left_stick_y;
-        }
-
-
-        // clip the right/left values so that the values never exceed +/- 1
-        if(gamepad1.dpad_up) {
-            slow = false;
-        }
-        else if(gamepad1.dpad_down) {
-            slow = true;
-        }
-
-        right1 = Range.clip(right1, -1, 1);
-        left1 = Range.clip(left1, (float) -1.0, (float) 1.0);
-
-        // scale the joystick value with custom method to make it easier to control
-        // the robot more precisely at slower speeds.
-        right1 = (float) scaleInput(right1);
-        left1 = (float) scaleInput(left1);
-
-        // write values from vars to the motors
-        motorRight.setPower(right1);
-        motorLeft.setPower(left1);
-
-        // activates hopper motors
-        if(gamepad1.right_bumper) {
-            motorHopper.setPower(0.6);
-        }
-        else if(gamepad1.left_bumper) {
-            motorHopper.setPower(-0.6);
+        if(gamepad1.a){
+            left.setPower(0.9);
+            right.setPower(0.9);
         }
         else {
-            motorHopper.setPower(0.0);
+            left.setPower(0.0);
+            right.setPower(0.0);
         }
 
-        // activates launcher motors
-        if(gamepad2.y) {
-            motorLauncherL.setPower(0.9);
-            motorLauncherR.setPower(0.9);
-        }
-        else {
-            motorLauncherL.setPower(0.0);
-            motorLauncherR.setPower(0.0);
-        }
-
-        /* changes launcher servo positions
-        if(gamepad2.x) {
-            ballLoader.setPosition(openPos);
-        }
-
-        if(gamepad2.a) {
-            ballLoader.setPosition(holdingPos);
-        }
-
-        if(gamepad2.b) {
-            ballLoader.setPosition(launchPos);
-        }*/
-
-        //endregion
     }
 
     /*
