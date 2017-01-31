@@ -119,7 +119,8 @@ public class BlueAutonomous extends LinearOpMode {
                     step++;
                 }
                 else if(step == 2) {
-
+                    leftMotor.setPower(0.0);
+                    rightMotor.setPower(0.0);
                 }
                 else if(step == 3) {
                     
